@@ -8,12 +8,14 @@ interface ResultsDisplayProps {
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
     const downloadCSV = () => {
-        const headers = ['Time (s)', 'Velocity (steps/s)', 'Position (steps)', 'Acceleration (steps/s²)'];
+        const headers = ['Step', 'Delay (μs)', 'Time (s)', 'Velocity (steps/s)', 'Position (steps)', 'Acceleration'];
         const csvContent = [
             headers.join(','),
-            ...results.time_points.map((time, index) =>
+            ...results.step_numbers.map((step, index) =>
                 [
-                    time,
+                    step,
+                    results.delays[index],
+                    results.time_points[index],
                     results.velocity_profile[index],
                     results.position_profile[index],
                     results.acceleration_profile[index]
@@ -28,9 +30,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
         a.download = 'stepper_curve_profile.csv';
         a.click();
         window.URL.revokeObjectURL(url);
-    };
-
-    const formatTime = (time: number): string => {
+    }; const formatTime = (time: number): string => {
         return time.toFixed(4);
     };
 
@@ -53,56 +53,50 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
                     <h3>Motion Summary</h3>
                     <div className="summary-stats">
                         <div className="stat">
+                            <span className="stat-label">Total Steps:</span>
+                            <span className="stat-value">{results.total_steps}</span>
+                        </div>
+                        <div className="stat">
                             <span className="stat-label">Total Time:</span>
                             <span className="stat-value">{formatTime(results.total_time)} s</span>
                         </div>
                         <div className="stat">
-                            <span className="stat-label">Peak Velocity:</span>
-                            <span className="stat-value">{formatNumber(results.peak_velocity)} steps/s</span>
+                            <span className="stat-label">Max Velocity:</span>
+                            <span className="stat-value">{formatNumber(Math.max(...results.velocity_profile))} steps/s</span>
                         </div>
                         <div className="stat">
-                            <span className="stat-label">Data Points:</span>
-                            <span className="stat-value">{results.time_points.length}</span>
+                            <span className="stat-label">Min Delay:</span>
+                            <span className="stat-value">{results.min_delay} μs</span>
+                        </div>
+                        <div className="stat">
+                            <span className="stat-label">Max Delay:</span>
+                            <span className="stat-value">{results.max_delay} μs</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Phase Breakdown */}
                 <div className="result-card phases-card">
-                    <h3>Motion Phases</h3>
+                    <h3>Motion Configuration</h3>
                     <div className="phases-list">
                         <div className="phase">
-                            <span className="phase-label">Acceleration Buildup:</span>
-                            <span className="phase-value">{formatTime(results.phases.t1)} s</span>
+                            <span className="phase-label">Acceleration Steps:</span>
+                            <span className="phase-value">{results.acc_steps}</span>
                         </div>
                         <div className="phase">
-                            <span className="phase-label">Constant Acceleration:</span>
-                            <span className="phase-value">{formatTime(results.phases.t2)} s</span>
+                            <span className="phase-label">Constant Speed Steps:</span>
+                            <span className="phase-value">{results.total_steps - results.acc_steps - results.dec_steps}</span>
                         </div>
                         <div className="phase">
-                            <span className="phase-label">Acceleration Decay:</span>
-                            <span className="phase-value">{formatTime(results.phases.t3)} s</span>
+                            <span className="phase-label">Deceleration Steps:</span>
+                            <span className="phase-value">{results.dec_steps}</span>
                         </div>
                         <div className="phase">
-                            <span className="phase-label">Constant Velocity:</span>
-                            <span className="phase-value">{formatTime(results.phases.t4)} s</span>
-                        </div>
-                        <div className="phase">
-                            <span className="phase-label">Deceleration Buildup:</span>
-                            <span className="phase-value">{formatTime(results.phases.t5)} s</span>
-                        </div>
-                        <div className="phase">
-                            <span className="phase-label">Constant Deceleration:</span>
-                            <span className="phase-value">{formatTime(results.phases.t6)} s</span>
-                        </div>
-                        <div className="phase">
-                            <span className="phase-label">Deceleration Decay:</span>
-                            <span className="phase-value">{formatTime(results.phases.t7)} s</span>
+                            <span className="phase-label">Speed Range:</span>
+                            <span className="phase-value">{formatNumber(1000000 / results.max_delay)} - {formatNumber(1000000 / results.min_delay)} steps/s</span>
                         </div>
                     </div>
-                </div>
-
-                {/* Chart Placeholders */}
+                </div>                {/* Chart Placeholders */}
                 <div className="result-card chart-card">
                     <h3>Velocity Profile</h3>
                     <div className="chart-placeholder">
@@ -215,25 +209,25 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
                         <table className="data-table">
                             <thead>
                                 <tr>
+                                    <th>Step</th>
+                                    <th>Delay (μs)</th>
                                     <th>Time (s)</th>
-                                    <th>Velocity</th>
-                                    <th>Position</th>
-                                    <th>Acceleration</th>
+                                    <th>Velocity (steps/s)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {results.time_points.slice(0, 10).map((time, index) => (
+                                {results.step_numbers.slice(0, 10).map((step, index) => (
                                     <tr key={index}>
-                                        <td>{formatTime(time)}</td>
+                                        <td>{step}</td>
+                                        <td>{formatNumber(results.delays[index])}</td>
+                                        <td>{formatTime(results.time_points[index])}</td>
                                         <td>{formatNumber(results.velocity_profile[index])}</td>
-                                        <td>{formatNumber(results.position_profile[index])}</td>
-                                        <td>{formatNumber(results.acceleration_profile[index])}</td>
                                     </tr>
                                 ))}
-                                {results.time_points.length > 10 && (
+                                {results.step_numbers.length > 10 && (
                                     <tr>
                                         <td colSpan={4} className="more-data">
-                                            ... and {results.time_points.length - 10} more data points
+                                            ... and {results.step_numbers.length - 10} more data points
                                         </td>
                                     </tr>
                                 )}

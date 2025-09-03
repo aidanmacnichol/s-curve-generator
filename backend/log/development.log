@@ -1,0 +1,71 @@
+Started GET "/calculator" for ::1 at 2025-09-02 21:30:12 -0600
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  
+ActionController::RoutingError (No route matches [GET] "/calculator"):
+  
+Started GET "/favicon.ico" for ::1 at 2025-09-02 21:30:12 -0600
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started POST "/api/v1/stepper_curves/calculate" for ::1 at 2025-09-02 21:33:53 -0600
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  
+SyntaxError (/Users/aidanmacnichol/Documents/stepper-motor-curve/backend/app/controllers/api/v1/stepper_curves_controller.rb:127: syntax errors found
+  [2m125 | [m    }
+  [2m126 | [m  end
+[1;31m> [m[2m127 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `class` statement
+  [2m    | [m[1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+):
+  
+app/controllers/api/v1/stepper_curves_controller.rb:127: syntax errors found
+Started POST "/api/v1/stepper_curves/calculate" for 127.0.0.1 at 2025-09-02 21:33:59 -0600
+  
+SyntaxError (/Users/aidanmacnichol/Documents/stepper-motor-curve/backend/app/controllers/api/v1/stepper_curves_controller.rb:127: syntax errors found
+  [2m125 | [m    }
+  [2m126 | [m  end
+[1;31m> [m[2m127 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `class` statement
+  [2m    | [m[1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+):
+  
+app/controllers/api/v1/stepper_curves_controller.rb:127: syntax errors found
+Started POST "/api/v1/stepper_curves/calculate" for 127.0.0.1 at 2025-09-02 21:34:19 -0600
+Processing by Api::V1::StepperCurvesController#calculate as */*
+  Parameters: {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}, "stepper_curf" => {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}}}
+Completed 500 Internal Server Error in 9ms (Views: 0.2ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/api/v1/stepper_curves/calculate" for 127.0.0.1 at 2025-09-02 21:35:56 -0600
+Processing by Api::V1::StepperCurvesController#calculate as */*
+  Parameters: {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}, "stepper_curf" => {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}}}
+Completed 200 OK in 3ms (Views: 0.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/calculator" for ::1 at 2025-09-02 21:36:09 -0600
+  
+ActionController::RoutingError (No route matches [GET] "/calculator"):
+  
+Started GET "/calculator" for ::1 at 2025-09-02 21:36:11 -0600
+  
+ActionController::RoutingError (No route matches [GET] "/calculator"):
+  
+Started GET "/" for ::1 at 2025-09-02 21:36:16 -0600
+Processing by Rails::WelcomeController#index as HTML
+  Rendering /Users/aidanmacnichol/.rbenv/versions/3.4.2/lib/ruby/gems/3.4.0/gems/railties-8.0.2.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered /Users/aidanmacnichol/.rbenv/versions/3.4.2/lib/ruby/gems/3.4.0/gems/railties-8.0.2.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 2.0ms | GC: 0.0ms)
+Completed 200 OK in 13ms (Views: 8.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 3.1ms)
+
+
+Started GET "/icon.png" for ::1 at 2025-09-02 21:36:16 -0600
+  
+ActionController::RoutingError (No route matches [GET] "/icon.png"):
+  
+Started POST "/api/v1/stepper_curves/calculate" for 127.0.0.1 at 2025-09-02 21:36:29 -0600
+Processing by Api::V1::StepperCurvesController#calculate as */*
+  Parameters: {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}, "stepper_curf" => {"stepper_curve" => {"total_steps" => 100, "acc_steps" => 20, "dec_steps" => 20, "min_delay" => 500, "max_delay" => 5000}}}
+Completed 200 OK in 5ms (Views: 1.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+

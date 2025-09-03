@@ -9,14 +9,12 @@ interface ParameterFormProps {
 
 const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) => {
     const [parameters, setParameters] = useState<StepperCurveParameters>({
-        total_steps: 50,
-        acc_steps: 500,
-        dec_steps: 1000,
-        min_delay: 2000,
-        max_delay: 0.001
-    });
-
-    const [errors, setErrors] = useState<Partial<Record<keyof StepperCurveParameters, string>>>({});
+        total_steps: 100,
+        acc_steps: 20,
+        dec_steps: 20,
+        min_delay: 500,      // 500 microseconds (fast)
+        max_delay: 5000      // 5000 microseconds (slow)
+    }); const [errors, setErrors] = useState<Partial<Record<keyof StepperCurveParameters, string>>>({});
 
     const handleInputChange = (field: keyof StepperCurveParameters, value: string) => {
         const numValue = parseFloat(value);
@@ -49,19 +47,27 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
             newErrors.dec_steps = 'Deceleration steps must be greater than 0';
         }
 
-        if (parameters.min_delay <= 0) {
-            newErrors.min_delay = 'Min delay must be greater than 0';
+        if (parameters.acc_steps + parameters.dec_steps > parameters.total_steps) {
+            newErrors.acc_steps = 'Acceleration + deceleration steps cannot exceed total steps';
+            newErrors.dec_steps = 'Acceleration + deceleration steps cannot exceed total steps';
         }
 
-        if (parameters.max_delay && parameters.max_delay <= 0) {
-            newErrors.max_delay = 'Max delay must be greater than 0';
+        if (parameters.min_delay <= 0) {
+            newErrors.min_delay = 'Minimum delay must be greater than 0';
+        }
+
+        if (parameters.max_delay <= 0) {
+            newErrors.max_delay = 'Maximum delay must be greater than 0';
+        }
+
+        if (parameters.min_delay >= parameters.max_delay) {
+            newErrors.min_delay = 'Minimum delay must be less than maximum delay';
+            newErrors.max_delay = 'Maximum delay must be greater than minimum delay';
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    }; const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (validateParameters()) {
@@ -71,23 +77,21 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
 
     const resetToDefaults = () => {
         setParameters({
-            total_steps: 1000,
-            acc_steps: 500,
-            dec_steps: 1000,
-            min_delay: 2000,
-            max_delay: 0.001
+            total_steps: 100,
+            acc_steps: 20,
+            dec_steps: 20,
+            min_delay: 500,
+            max_delay: 5000
         });
         setErrors({});
-    };
-
-    return (
+    }; return (
         <div className="parameter-form">
             <h2>Motion Parameters</h2>
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="total_steps">
-                        Total Steps (50, 100 or 150)
+                        Total Steps
                         <span className="required">*</span>
                     </label>
                     <input
@@ -95,8 +99,8 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
                         id="total_steps"
                         value={parameters.total_steps}
                         onChange={(e) => handleInputChange('total_steps', e.target.value)}
-                        min="0"
-                        step="0.1"
+                        min="1"
+                        step="1"
                         required
                         className={errors.total_steps ? 'error' : ''}
                     />
@@ -105,7 +109,7 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
 
                 <div className="form-group">
                     <label htmlFor="acc_steps">
-                        Acceleration Steps (50, 100 or 150)
+                        Acceleration Steps
                         <span className="required">*</span>
                     </label>
                     <input
@@ -113,8 +117,8 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
                         id="acc_steps"
                         value={parameters.acc_steps}
                         onChange={(e) => handleInputChange('acc_steps', e.target.value)}
-                        min="0"
-                        step="0.1"
+                        min="1"
+                        step="1"
                         required
                         className={errors.acc_steps ? 'error' : ''}
                     />
@@ -123,7 +127,7 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
 
                 <div className="form-group">
                     <label htmlFor="dec_steps">
-                        Deceleration Steps (steps/sec³)
+                        Deceleration Steps
                         <span className="required">*</span>
                     </label>
                     <input
@@ -131,8 +135,8 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
                         id="dec_steps"
                         value={parameters.dec_steps}
                         onChange={(e) => handleInputChange('dec_steps', e.target.value)}
-                        min="0"
-                        step="0.1"
+                        min="1"
+                        step="1"
                         required
                         className={errors.dec_steps ? 'error' : ''}
                     />
@@ -141,7 +145,7 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
 
                 <div className="form-group">
                     <label htmlFor="min_delay">
-                        Min Delay (ms)
+                        Min Delay (microseconds)
                         <span className="required">*</span>
                     </label>
                     <input
@@ -149,7 +153,7 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
                         id="min_delay"
                         value={parameters.min_delay}
                         onChange={(e) => handleInputChange('min_delay', e.target.value)}
-                        min="0"
+                        min="1"
                         step="1"
                         required
                         className={errors.min_delay ? 'error' : ''}
@@ -159,21 +163,21 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
 
                 <div className="form-group">
                     <label htmlFor="max_delay">
-                        Max Delay (ms)
+                        Max Delay (microseconds)
+                        <span className="required">*</span>
                     </label>
                     <input
                         type="number"
                         id="max_delay"
                         value={parameters.max_delay}
                         onChange={(e) => handleInputChange('max_delay', e.target.value)}
-                        min="0.0001"
-                        max="0.1"
-                        step="0.0001"
+                        min="1"
+                        step="1"
                         required
                         className={errors.max_delay ? 'error' : ''}
                     />
                     {errors.max_delay && <span className="error-text">{errors.max_delay}</span>}
-                    <small className="help-text">Smaller values provide higher precision but take longer to calculate</small>
+                    <small className="help-text">Higher delay = slower speed. Min delay should be less than max delay.</small>
                 </div>
 
                 <div className="form-actions">
@@ -202,25 +206,25 @@ const ParameterForm: React.FC<ParameterFormProps> = ({ onCalculate, loading }) =
                     <button
                         className="preset-button"
                         onClick={() => setParameters({
-                            total_steps: 500,
-                            acc_steps: 200,
-                            dec_steps: 500,
+                            total_steps: 50,
+                            acc_steps: 10,
+                            dec_steps: 10,
                             min_delay: 1000,
-                            max_delay: 0.001
+                            max_delay: 10000
                         })}
                         disabled={loading}
                     >
-                        Slow & Precise
+                        Slow & Smooth
                     </button>
 
                     <button
                         className="preset-button"
                         onClick={() => setParameters({
-                            total_steps: 2000,
-                            acc_steps: 1000,
-                            dec_steps: 2000,
-                            min_delay: 5000,
-                            max_delay: 0.001
+                            total_steps: 200,
+                            acc_steps: 50,
+                            dec_steps: 50,
+                            min_delay: 300,
+                            max_delay: 3000
                         })}
                         disabled={loading}
                     >

@@ -86,12 +86,15 @@ const CalculatorPage: React.FC = () => {
                                 <div className="parameter-info">
                                     <h4>Parameter Guide:</h4>
                                     <ul>
-                                        <li><strong>Total Steps:</strong> Total Steps (50, 100 or 150)</li>
-                                        <li><strong>Acceleration Steps:</strong>Total number of steps during the acceleration phase</li>
-                                        <li><strong>Deceleration Steps:</strong> Total number of steps during the deceleration phase</li>
-                                        <li><strong>Min Delay:</strong>Minimum delay in milliseconds during the peak speed</li>
-                                        <li><strong>Max Delay:</strong>Maximum delay in milliseconds during start of movement. *Note make sure it is below "fs" on datasheet*</li>
+                                        <li><strong>Total Steps:</strong> Total number of steps for the complete motion</li>
+                                        <li><strong>Acceleration Steps:</strong> Number of steps during the acceleration phase</li>
+                                        <li><strong>Deceleration Steps:</strong> Number of steps during the deceleration phase</li>
+                                        <li><strong>Min Delay:</strong> Minimum delay in microseconds (fastest speed)</li>
+                                        <li><strong>Max Delay:</strong> Maximum delay in microseconds (slowest speed, starting speed)</li>
                                     </ul>
+                                    <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f8ff', borderRadius: '6px' }}>
+                                        <strong>Note:</strong> The remaining steps (Total - Acceleration - Deceleration) will run at constant minimum delay (maximum speed).
+                                    </div>
                                 </div>
                             </div>
                         )}
